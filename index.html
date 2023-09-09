@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Body Composition Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 30px;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .container {
+            background-color: #f2f2f2;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            width: 150px;
+            text-align: right;
+            margin-right: 10px;
+        }
+
+        input[type="number"], select {
+            width: 150px;
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #d9d9d9;
+            border-radius: 5px;
+        }
+
+        .neumorphism-btn {
+            display: block;
+            padding: 8px 15px;
+            background-color: #f2f2f2;
+            color: #007BFF;
+            border: 1px solid #d9d9d9;
+            cursor: pointer;
+            margin: 10px auto;
+            border-radius: 5px;
+            box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+            transition: box-shadow 0.3s, background-color 0.3s;
+        }
+
+        .neumorphism-btn:hover {
+            background-color: #007BFF;
+            color: #fff;
+            box-shadow: 3px 3px 6px #b8b8b8, -3px -3px 6px #ffffff;
+        }
+
+        #results {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        #results h2 {
+            margin-bottom: 15px;
+        }
+
+        #results p {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                max-width: 300px;
+            }
+
+            input[type="number"], select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Body Composition Calculator</h1>
+        <form id="bodyCompositionForm">
+            <label for="height">Height (cm):</label>
+            <input type="number" step="1" id="height" required><br>
+
+            <label for="weight">Total Body Weight (kg):</label>
+            <input type="number" step="0.1" id="weight" required><br>
+
+            <label for="age">Age (years):</label>
+            <input type="number" step="1" id="age" required><br>
+
+            <label for="hipSize">Hip Size (cm):</label>
+            <input type="number" step="1" id="hipSize" required><br>
+
+            <label for="waistSize">Waist Size (cm):</label>
+            <input type="number" step="1" id="waistSize" required><br>
+
+            <label for="armSize">Arm Size (cm):</label>
+            <input type="number" step="1" id="armSize" required><br>
+
+            <label for="chestSize">Chest Size (cm):</label>
+            <input type="number" step="1" id="chestSize" required><br>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select><br>
+<br><br><br>
+            <button class="neumorphism-btn" type="button" onclick="calculateComposition()">Calculate</button>
+        </form>
+
+        <div id="results">
+            <!-- The calculated values will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        function calculateComposition() {
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const age = parseInt(document.getElementById('age').value);
+            const hipSize = parseFloat(document.getElementById('hipSize').value);
+            const waistSize = parseFloat(document.getElementById('waistSize').value);
+            const gender = document.getElementById('gender').value;
+
+            // Formulas to calculate the values
+            const bmi = weight / ((height / 100) ** 2);
+            const bodyFatPercentage = gender === 'male' ?
+                (0.29288 * waistSize) + (0.15736 * height) - (0.05762 * weight) + 1.0947 :
+                (0.29669 * waistSize) + (0.16298 * height) - (0.07197 * weight) + 1.112;
+            const muscleMass = weight - (bodyFatPercentage * weight);
+            const totalBodyWater = gender === 'male' ?
+                (2.447 + (0.3362 * weight) + (0.1074 * height)) - (0.09156 * age) :
+                (2.097 + (0.3315 * weight) + (0.2466 * height)) - (0.1069 * age);
+            const bmr = gender === 'male' ?
+                (88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age)) :
+                (447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age));
+            const waistToHipRatio = waistSize / hipSize;
+
+            // Display the results
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <h2>Calculated Values</h2>
+                <p>Body Fat Percentage: ${bodyFatPercentage.toFixed(2)}%</p>
+                <p>Muscle Mass: ${muscleMass.toFixed(2)} kg</p>
+                <p>Total Body Water: ${totalBodyWater.toFixed(2)} liters</p>
+                <p>Basal Metabolic Rate (BMR): ${bmr.toFixed(2)} calories/day</p>
+                <p>Body Mass Index (BMI): ${bmi.toFixed(2)}</p>
+                <p>Waist-to-Hip Ratio: ${waistToHipRatio.toFixed(2)}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
